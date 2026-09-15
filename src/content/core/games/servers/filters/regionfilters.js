@@ -13,6 +13,7 @@ import { createButton } from '../../../ui/buttons.js';
 import { getCountryFlagImageUrl } from '../../../ui/flags.js';
 import { showRegionDonationPopup } from '../../../review/review.js';
 import DOMPurify from 'dompurify';
+import { dispatchPageEvent } from '../../../firefox/pageBridge.js';
 
 const DEFAULT_PLACE_ID = window.ROVALRA_PLACE_ID;
 const GLOBE_DRAG_THRESHOLD = 6;
@@ -330,11 +331,9 @@ async function fetchCounts() {
         State.activeServerCounts = {};
     } finally {
         document.dispatchEvent(new CustomEvent(EVT_REGIONS_UPDATED));
-        document.dispatchEvent(
-            new CustomEvent(EVT_GLOBE_UPDATE_DATA, {
-                detail: { serverCounts: State.activeServerCounts },
-            }),
-        );
+        dispatchPageEvent(document, EVT_GLOBE_UPDATE_DATA, {
+            serverCounts: State.activeServerCounts,
+        });
     }
 }
 
@@ -435,11 +434,9 @@ function createGlobePanel(container) {
             clickCount = 0;
             State.easterEggActive = !State.easterEggActive;
             if (State.easterEggActive) {
-                document.dispatchEvent(
-                    new CustomEvent(EVT_GLOBE_EASTER_EGG, {
-                        detail: { iconUrl: assets.rovalraIcon },
-                    }),
-                );
+                dispatchPageEvent(document, EVT_GLOBE_EASTER_EGG, {
+                    iconUrl: assets.rovalraIcon,
+                });
                 if (title) title.textContent = 'Gilberts In Your Area';
             } else {
                 document.dispatchEvent(
@@ -520,18 +517,14 @@ async function ensureGlobeInitialized(theme) {
 
     const mapUrl = theme === 'dark' ? assets.mapDark : assets.mapLight;
     State.activeServerCounts = buildServerCountsMap(State.apiCounts || {});
-    document.dispatchEvent(
-        new CustomEvent(EVT_INIT_GLOBE, {
-            detail: {
-                REGIONS: State.regions,
-                mapUrl: mapUrl,
-                countriesData: null,
-                theme,
-                serverCounts: State.activeServerCounts,
-                dataCenterCounts: State.dataCenterCounts,
-            },
-        }),
-    );
+    dispatchPageEvent(document, EVT_INIT_GLOBE, {
+        REGIONS: State.regions,
+        mapUrl: mapUrl,
+        countriesData: null,
+        theme,
+        serverCounts: State.activeServerCounts,
+        dataCenterCounts: State.dataCenterCounts,
+    });
     State.globe.initDispatched = true;
 }
 
@@ -718,11 +711,9 @@ async function getAndCacheServerRegion(server, placeId) {
                 const localCount = State.localServersByRegion[regionKey].length;
                 if (localCount > currentGlobalCount) {
                     State.activeServerCounts[regionKey] = localCount;
-                    document.dispatchEvent(
-                        new CustomEvent(EVT_GLOBE_UPDATE_DATA, {
-                            detail: { serverCounts: State.activeServerCounts },
-                        }),
-                    );
+                    dispatchPageEvent(document, EVT_GLOBE_UPDATE_DATA, {
+                        serverCounts: State.activeServerCounts,
+                    });
                 }
             }
         }

@@ -156,7 +156,17 @@
     }
 
     document.addEventListener('initRovalraGlobe', (e) => {
-        const { REGIONS, serverCounts, mapUrl } = e.detail;
+        let detail = e.detail;
+        if (typeof detail === 'string') {
+            try {
+                detail = JSON.parse(detail);
+            } catch {
+                return;
+            }
+        }
+        if (!detail || typeof detail !== 'object') return;
+
+        const { REGIONS, serverCounts, mapUrl } = detail;
         input.isExternallyClosed = false; 
         serverCountsData = serverCounts || {};
 
@@ -559,18 +569,34 @@
     }
 
     document.addEventListener('rovalraGlobe_UpdateData', (e) => {
-        if (e.detail?.serverCounts) {
-            serverCountsData = e.detail.serverCounts;
+        let detail = e.detail;
+        if (typeof detail === 'string') {
+            try {
+                detail = JSON.parse(detail);
+            } catch {
+                return;
+            }
+        }
+        if (detail?.serverCounts) {
+            serverCountsData = detail.serverCounts;
             markers.forEach(m => { m.hasServers = (serverCountsData[m.code] || 0) > 0; });
         }
     });
 
     document.addEventListener('rovalraGlobeEasterEgg', (e) => {
+        let detail = e.detail;
+        if (typeof detail === 'string') {
+            try {
+                detail = JSON.parse(detail);
+            } catch {
+                return;
+            }
+        }
         input.easterEggActive = true;
-        if (e.detail.iconUrl) {
+        if (detail?.iconUrl) {
             const img = new Image();
             img.onload = () => { easterEggTexture = img; };
-            img.src = e.detail.iconUrl;
+            img.src = detail.iconUrl;
         }
     });
 
