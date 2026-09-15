@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "RoValra - A Better Addon",
-    "version": "2.6.7.31",
+    "version": "2.6.7.32",
     "description": "An extension aiming to provide features that other Roblox extensions paywall!",
     "content_scripts": [
         {
@@ -83,8 +83,8 @@
     },
     "browser_specific_settings": {
         "gecko": {
-            "id": "rovalra@rav4",
-            "strict_min_version": "140.0",
+            "id": "rovalra@commandthealiens",
+            "strict_min_version": "142.0",
             "data_collection_permissions": {
                 "required": ["none"],
                 "optional": []
